@@ -2,8 +2,10 @@ import os
 import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Allow all origins; tighten with origins=[...] in production
 
 # --- 1. Robust Model Loading ---
 # Resolve absolute path to models/model.pkl relative to this file
@@ -34,6 +36,12 @@ def home():
         "expected_features_count": len(FEATURES),
         "expected_features": FEATURES
     })
+
+
+@app.route('/features', methods=['GET'])
+def features():
+    """Return the ordered list of feature names the model expects."""
+    return jsonify({"features": FEATURES})
 
 
 @app.route('/predict', methods=['POST'])
